@@ -43,7 +43,7 @@ def lambda_handler(event, context):
 
     buffer = download_video_to_buffer(yt, url)
 
-    s3_client = boto3.client("s3", region_name="us-east-1")
+    s3_client = boto3.client("s3", region_name="us-east-2")
     s3_client.put_object(
         Bucket=VIDEOS_BUCKET_NAME,
         Key=f"{video_id}.mp3",
