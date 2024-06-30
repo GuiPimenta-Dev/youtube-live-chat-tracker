@@ -40,10 +40,10 @@
     "@aws-cdk/customresources:installLatestAwsSdkDefault": false,
     "region": "us-east-2",
     "account": "211125768252",
-    "name": "Youtube-Chat-Tracker",
+    "name": "Youtube-Live-Chat-Tracker",
     "repo": {
       "owner": "GuiPimenta-Dev",
-      "name": "youtube-chat-tracker"
+      "name": "youtube-live-chat-tracker"
     },
     "bucket": "",
     "base_url": "",
