@@ -18,3 +18,5 @@ class CreateChartConfig:
         services.api_gateway.create_endpoint("POST", "/chart/{video_id}", function, public=True)
 
         services.sqs.grant_send_messages("transcript_queue", function)
+
+        services.s3.transcriptions_bucket.grant_read_write(function)

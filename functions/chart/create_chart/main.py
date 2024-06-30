@@ -79,6 +79,8 @@ def lambda_handler(event, context):
     interval = event["queryStringParameters"].get("interval", 10)
     start_time = event["queryStringParameters"].get("start_time", None)
 
+    print(f"Processing video {video_id} with interval {interval} and start time {start_time}")
+
     s3_client = boto3.client("s3")
     sqs = boto3.client("sqs", "us-east-2")
     TRANSCRIPT_QUEUE_URL = os.environ.get("TRANSCRIPT_QUEUE_URL")
