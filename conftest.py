@@ -39,7 +39,7 @@ def dynamodb():
 @pytest.fixture
 def s3():
     with mock_s3():
-        s3 = boto3.client("s3", region_name="us-east-1")
+        s3 = boto3.client("s3", region_name="us-east-2")
         s3.create_bucket(Bucket="bucket")
         yield s3
 
