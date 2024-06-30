@@ -82,6 +82,24 @@
         ]
     },
     {
+        "name": "TranscriptionWorker",
+        "path": "./functions/chart/transcription_worker",
+        "description": "Parse the transcription",
+        "timeout": 60,
+        "triggers": [
+            {
+                "service": "sqs",
+                "trigger": "transcript_queue"
+            }
+        ],
+        "invocations": [
+            {
+                "service": "dynamodb",
+                "resource": "transcriptions_table"
+            }
+        ]
+    },
+    {
         "name": "CreateChart",
         "path": "./functions/chart/create_chart",
         "description": "Parse the transcription",
