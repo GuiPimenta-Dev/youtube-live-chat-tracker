@@ -83,8 +83,8 @@ def lambda_handler(event, context):
 
     s3_client = boto3.client("s3")
     sqs = boto3.client("sqs", "us-east-2")
+    
     TRANSCRIPT_QUEUE_URL = os.environ.get("TRANSCRIPT_QUEUE_URL")
-
     TRANSCRIPTIONS_BUCKET = os.environ.get("TRANSCRIPTIONS_BUCKET")
 
     key = f"{video_id}.json"
@@ -102,7 +102,7 @@ def lambda_handler(event, context):
     print(f"Sending batches to SQS ({TRANSCRIPT_QUEUE_URL})")
 
     for index, batch in enumerate(batches):
-        print(f"Sending batch {index} to SQS")
+        print(f"Sending batch {index + 1} to SQS")
         sqs.send_message(
             QueueUrl=TRANSCRIPT_QUEUE_URL,
             MessageBody=json.dumps(
