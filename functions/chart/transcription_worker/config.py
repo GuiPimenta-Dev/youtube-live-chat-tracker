@@ -15,10 +15,10 @@ class TranscriptionWorkerConfig:
                 "OPENAPI_KEY_SECRET_NAME": services.secrets_manager.open_api_secret.secret_name,
             },
         )
-        
+
         services.sqs.create_trigger("transcript_queue", function)
-        
+
         services.dynamodb.grant_write("transcriptions_table", function)
         services.dynamodb.chats_table.grant_read_data(function)
-        
+
         services.secrets_manager.open_api_secret.grant_read(function)
