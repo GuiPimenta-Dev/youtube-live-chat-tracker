@@ -22,7 +22,7 @@ class DynamoDB:
         self.transcriptions_table = dynamodb.Table(
             scope,
             "TranscriptionsTable",
-            table_name=f"{context.stage}-{context.name}-Transcriptions",
+            table_name=f"{context.stage}-{context.name}-Live-Transcriptions",
             partition_key=dynamodb.Attribute(name="PK", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="SK", type=dynamodb.AttributeType.STRING),
             stream=dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
