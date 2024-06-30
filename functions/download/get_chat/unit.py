@@ -1,9 +1,9 @@
 import json
 import os
 
-from .main import lambda_handler
-
 import pytest
+
+from .main import lambda_handler
 
 
 @pytest.fixture

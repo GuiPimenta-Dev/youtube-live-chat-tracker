@@ -1,13 +1,17 @@
 import json
 import os
-from .main import lambda_handler
-import pytest
+
 import boto3
+import pytest
+
+from .main import lambda_handler
+
 
 @pytest.fixture
 def transcription_bucket():
     os.environ["TRANSCRIPTIONS_BUCKET_NAME"] = "bucket"
     yield "bucket"
+
 
 @pytest.fixture
 def videos_table(dynamodb):
@@ -24,14 +28,9 @@ def videos_table(dynamodb):
     )
     table = boto3.resource("dynamodb").Table("videos-table")
 
-    table.put_item(
-        Item={
-            "PK": "123",
-            "language": "en-US"
-        }
-    )
+    table.put_item(Item={"PK": "123", "language": "en-US"})
     yield dynamodb
-    
+
 
 def test_transcribe_handler(transcription_bucket, videos_table, transcribe):
 
