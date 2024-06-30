@@ -1,9 +1,17 @@
 import json
 import os
 
-import pytest
-from moto import mock_sqs, mock_dynamodb, mock_s3, mock_sns
 import boto3
+import pytest
+from moto import mock_dynamodb, mock_s3, mock_sns, mock_sqs
+
+
+def simplify_dynamodb_item(item):
+    simple_item = {}
+    for key, value in item.items():
+        for _, data_value in value.items():
+            simple_item[key] = data_value
+    return simple_item
 
 
 @pytest.fixture
