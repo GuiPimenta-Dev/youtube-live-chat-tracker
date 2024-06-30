@@ -10,7 +10,6 @@ class CreateChartConfig:
             description="Parse the transcription",
             directory="create_chart",
             environment={
-                "TRANSCRIPTIONS_BUCKET": services.s3.transcriptions_bucket.bucket_name,
                 "TRANSCRIPT_QUEUE_URL": services.sqs.transcript_queue.queue_url,
             },
         )
@@ -19,4 +18,3 @@ class CreateChartConfig:
 
         services.sqs.grant_send_messages("transcript_queue", function)
 
-        services.s3.transcriptions_bucket.grant_read_write(function)

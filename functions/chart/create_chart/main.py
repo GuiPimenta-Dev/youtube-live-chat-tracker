@@ -1,5 +1,4 @@
 import json
-import math
 import os
 from collections import defaultdict
 from dataclasses import dataclass
@@ -7,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List
 
 import boto3
+from boto3.dynamodb.conditions import Key
 
 
 @dataclass
@@ -19,101 +19,77 @@ class Output:
     message: str
 
 
-def convert_to_minutes(duration):
-    # Split the time string into hours, minutes, and seconds
-    hours, minutes, seconds = map(int, duration.split(":"))
+def group_chat_by_interval(partition_key, interval):
 
-    # Create a timedelta object
-    total_duration = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+    session = boto3.Session()
 
-    # Convert the total duration to minutes
-    total_minutes = total_duration.total_seconds() / 60
-    return total_minutes
+    dynamodb = session.resource("dynamodb")
+    CHAT_TABLE_NAME = os.environ.get("CHAT_TABLE_NAME", "Dev-Chats")
+    table = dynamodb.Table(CHAT_TABLE_NAME)
 
+    response = table.query(KeyConditionExpression=boto3.dynamodb.conditions.Key("PK").eq(partition_key))
 
-def convert_to_utc(date_str, date_format, original_offset_hours):
-    # Parse the string date to a datetime object
-    local_time = datetime.strptime(date_str, date_format)
+    items = response["Items"]
 
-    # Create a timezone object with the original offset
-    original_timezone = timezone(timedelta(hours=original_offset_hours))
+    # Function to round down to the nearest 10-minute interval
+    def round_time(dt, interval=interval):
+        discard = timedelta(minutes=dt.minute % interval, seconds=dt.second, microseconds=dt.microsecond)
+        return dt - discard
 
-    # Set the timezone information to the datetime object
-    local_time = local_time.replace(tzinfo=original_timezone)
+    def format_time_label(dt):
+        total_minutes = dt.hour * 60 + dt.minute
+        minutes = total_minutes % 60
+        hours = total_minutes // 60
+        return f"{hours:02d}:{minutes:02d}"
 
-    # Convert to UTC
-    utc_time = local_time.astimezone(timezone.utc)
+    # Group items by 10-minute intervals
+    grouped_items = defaultdict(list)
+    for item in items:
+        sk = item["SK"]
+        sk = sk.replace(" UTC+0000", "")
+        sk_datetime = datetime.strptime(sk, "%Y-%m-%d %H:%M:%S")
+        rounded_time = round_time(sk_datetime)
+        time_label = format_time_label(rounded_time)
+        grouped_items[time_label].append(item)
 
-    return utc_time.isoformat()
-
-
-def group_by_interval(data: Dict[str, Dict[str, Any]], interval: int) -> List[List[Dict[str, Any]]]:
-
-    grouped_data = defaultdict(list)
-
-    for entry in data:
-        if "start_time" not in entry or "end_time" not in entry:
-            continue
-
-        start_time = float(entry["start_time"])
-        end_time = float(entry["end_time"])
-
-        # Determine the interval group for start and end times
-        start_interval = int(start_time // interval)
-        end_interval = int(end_time // interval)
-
-        # Add the entry to the corresponding interval groups
-        for i in range(start_interval, end_interval + 1):
-            grouped_data[i].append(entry)
-
-    # Convert the defaultdict to a sorted list of lists
-    sorted_intervals = sorted(grouped_data.keys())
-    grouped_list = [grouped_data[i] for i in sorted_intervals]
-
-    return grouped_list
+    return grouped_items
 
 
 def lambda_handler(event, context):
 
     video_id = event["pathParameters"]["video_id"]
     interval = event["queryStringParameters"].get("interval", 10)
-    start_time = event["queryStringParameters"].get("start_time", None)
 
-    print(f"Processing video {video_id} with interval {interval} and start time {start_time}")
+    print(f"Processing video {video_id} with interval {interval}")
 
-    s3_client = boto3.client("s3")
     sqs = boto3.client("sqs", "us-east-2")
 
     TRANSCRIPT_QUEUE_URL = os.environ.get("TRANSCRIPT_QUEUE_URL")
-    TRANSCRIPTIONS_BUCKET = os.environ.get("TRANSCRIPTIONS_BUCKET")
 
-    key = f"{video_id}.json"
-
-    response = s3_client.get_object(Bucket=TRANSCRIPTIONS_BUCKET, Key=key)
-    body = json.loads(response["Body"].read())
-
-    video_id = body["jobName"]
-    transcription = body["results"]["items"]
-
-    interval_in_seconds = int(interval) * 60
-    batches = group_by_interval(transcription, interval_in_seconds)
-
-    print(f"Transcription has been split into {len(batches)} batches")
-    print(f"Sending batches to SQS ({TRANSCRIPT_QUEUE_URL})")
+    batches = group_chat_by_interval(partition_key=video_id, interval=interval)
 
     for index, batch in enumerate(batches):
+
         print(f"Sending batch {index + 1} to SQS")
         sqs.send_message(
             QueueUrl=TRANSCRIPT_QUEUE_URL,
             MessageBody=json.dumps(
                 {
                     "video_id": video_id,
-                    "transcription": batch,
+                    "label": batch,
+                    "messages": batches[batch],
                     "interval": interval,
-                    "start_time": start_time,
                     "index": index,
-                }
+                },
+                default=str,
             ),
         )
 
     return {"statusCode": 200, "body": json.dumps({"message": "ok!"}), "headers": {"Access-Control-Allow-Origin": "*"}}
+
+
+event = {
+    "pathParameters": {"video_id": "016dcccd-9656-44f1-8a0c-07f2d7f530cc"},
+    "queryStringParameters": {"interval": 10},
+}
+lambda_handler(event, None)

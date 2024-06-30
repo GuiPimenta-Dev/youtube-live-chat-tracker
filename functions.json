@@ -32,10 +32,6 @@
         ],
         "invocations": [
             {
-                "service": "s3",
-                "resource": "videos_bucket"
-            },
-            {
                 "service": "dynamodb",
                 "resource": "videos_table"
             },
@@ -60,24 +56,6 @@
             {
                 "service": "dynamodb",
                 "resource": "chats_table"
-            }
-        ]
-    },
-    {
-        "name": "Transcribe",
-        "path": "./functions/download/transcribe",
-        "description": "Transcript audio to text",
-        "timeout": 60,
-        "triggers": [
-            {
-                "service": "sns",
-                "trigger": "videos_topic"
-            }
-        ],
-        "invocations": [
-            {
-                "service": "s3",
-                "resource": "transcriptions_bucket"
             }
         ]
     },
