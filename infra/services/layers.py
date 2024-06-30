@@ -33,7 +33,7 @@ class Layers:
             scope,
             id="SmUtilsLayer",
             code=_lambda.Code.from_asset(Path.layer("layers/sm_utils")),
-            compatible_runtimes=[_lambda.Runtime.PYTHON_3_9],
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_10],
             description="",
         )
 
