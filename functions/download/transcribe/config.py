@@ -1,4 +1,5 @@
 from infra.services import Services
+from aws_cdk import aws_iam as iam
 
 class TranscribeConfig:
     def __init__(self, services: Services) -> None:
@@ -19,3 +20,10 @@ class TranscribeConfig:
         services.s3.grant_write("transcriptions_bucket",function)
         
         services.dynamodb.videos_table.grant_read_data(function)
+        
+        function.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["transcribe:StartTranscriptionJob"],
+                resources=["*"],
+            )
+        )
