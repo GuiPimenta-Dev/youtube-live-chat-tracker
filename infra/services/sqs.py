@@ -9,14 +9,14 @@ class SQS:
         self.downloads_queue = sqs.Queue(
             scope,
             "DownloadsQueue",
-            queue_name=f"{context.stage.lower()}-downloads",
+            queue_name=f"{context.stage.lower()}-youtube-downloads",
             visibility_timeout=Duration.minutes(15),
         )
 
         self.transcript_queue = sqs.Queue(
             scope,
             "TranscriptQueue",
-            queue_name=f"{context.stage.lower()}-transcript",
+            queue_name=f"{context.stage.lower()}-youtube-transcript",
         )
 
     @trigger(service="sqs", trigger="queue", function="function")
