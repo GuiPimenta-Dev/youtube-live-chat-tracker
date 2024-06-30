@@ -1,7 +1,8 @@
-from functions.downloader.config import DownloaderConfig
-from functions.starter.config import StarterConfig
 from aws_cdk import Stack
 from constructs import Construct
+
+from functions.downloader.config import DownloaderConfig
+from functions.starter.config import StarterConfig
 from infra.services import Services
 
 
