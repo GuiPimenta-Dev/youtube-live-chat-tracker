@@ -20,13 +20,22 @@ def sqs():
 @pytest.fixture
 def dynamodb():
     with mock_dynamodb():
-        yield boto3.client("dynamodb")
+        dynamodb = boto3.client("dynamodb")
+        dynamodb.create_table(
+            TableName="table",
+            KeySchema=[{"AttributeName": "PK", "KeyType": "HASH"}],
+            AttributeDefinitions=[{"AttributeName": "PK", "AttributeType": "S"}],
+            BillingMode="PAY_PER_REQUEST",
+        )
+        yield dynamodb
 
 
 @pytest.fixture
 def s3():
     with mock_s3():
-        yield boto3.client("s3", region_name="us-east-1")
+        s3 = boto3.client("s3", region_name="us-east-1")
+        s3.create_bucket(Bucket="bucket")
+        yield s3
 
 
 @pytest.fixture
