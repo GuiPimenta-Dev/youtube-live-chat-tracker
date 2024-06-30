@@ -14,7 +14,7 @@ class DownloaderConfig:
             timeout=15,
             environment={
                 "VIDEOS_BUCKET_NAME": services.s3.videos_bucket.bucket_name,
-                "VIDEOS_TABLE_NAME": services.dynamo_db.videos_table.table_name,
+                "VIDEOS_TABLE_NAME": services.dynamodb.videos_table.table_name,
                 "VIDEOS_TOPIC_ARN": services.sns.videos_topic.topic_arn,
             },
         )

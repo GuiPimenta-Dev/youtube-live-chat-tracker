@@ -10,20 +10,13 @@ from .main import lambda_handler
 
 @pytest.fixture
 def videos_bucket(s3):
-    s3.create_bucket(Bucket="videos_bucket")
-    os.environ["VIDEOS_BUCKET_NAME"] = "videos_bucket"
+    os.environ["VIDEOS_BUCKET_NAME"] = "bucket"
     yield s3
 
 
 @pytest.fixture
 def videos_table(dynamodb):
-    dynamodb.create_table(
-        TableName="videos_table",
-        KeySchema=[{"AttributeName": "PK", "KeyType": "HASH"}],
-        AttributeDefinitions=[{"AttributeName": "PK", "AttributeType": "S"}],
-        BillingMode="PAY_PER_REQUEST",
-    )
-    os.environ["VIDEOS_TABLE_NAME"] = "videos_table"
+    os.environ["VIDEOS_TABLE_NAME"] = "table"
     yield dynamodb
 
 
@@ -52,9 +45,9 @@ def test_it_should_download_a_video_and_trigger_the_correct_events(videos_bucket
 
     lambda_handler(event, None)
 
-    video_on_bucket = videos_bucket.list_objects_v2(Bucket="videos_bucket")["Contents"][0]
+    video_on_bucket = videos_bucket.list_objects_v2(Bucket="bucket")["Contents"][0]
     video_on_table = simplify_dynamodb_item(
-        videos_table.get_item(TableName="videos_table", Key={"PK": {"S": "5Zw0taVl2l0"}})["Item"]
+        videos_table.get_item(TableName="table", Key={"PK": {"S": "5Zw0taVl2l0"}})["Item"]
     )
 
     assert video_on_bucket["Key"] == "5Zw0taVl2l0.mp3"
