@@ -83,7 +83,7 @@ def lambda_handler(event, context):
 
     s3_client = boto3.client("s3")
     sqs = boto3.client("sqs", "us-east-2")
-    
+
     TRANSCRIPT_QUEUE_URL = os.environ.get("TRANSCRIPT_QUEUE_URL")
     TRANSCRIPTIONS_BUCKET = os.environ.get("TRANSCRIPTIONS_BUCKET")
 
