@@ -1,3 +1,4 @@
+from functions.starter.config import StarterConfig
 from aws_cdk import Stack
 from constructs import Construct
 from infra.services import Services
@@ -9,3 +10,6 @@ class LambdaStack(Stack):
         super().__init__(scope, f"{context.name}-Lambda-Stack", **kwargs)
 
         self.services = Services(self, context)
+
+        # Starter
+        StarterConfig(self.services)
