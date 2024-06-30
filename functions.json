@@ -12,6 +12,24 @@
                 "public": true
             }
         ],
+        "invocations": [
+            {
+                "service": "sqs",
+                "resource": "downloads_queue"
+            }
+        ]
+    },
+    {
+        "name": "Downloader",
+        "path": "./functions/downloader",
+        "description": "Download a YouTube video and Stores it on S3",
+        "timeout": 60,
+        "triggers": [
+            {
+                "service": "sqs",
+                "trigger": "downloads_queue"
+            }
+        ],
         "invocations": []
     }
 ]

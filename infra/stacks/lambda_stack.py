@@ -1,3 +1,4 @@
+from functions.downloader.config import DownloaderConfig
 from functions.starter.config import StarterConfig
 from aws_cdk import Stack
 from constructs import Construct
@@ -13,3 +14,6 @@ class LambdaStack(Stack):
 
         # Starter
         StarterConfig(self.services)
+
+        # Downloader
+        DownloaderConfig(self.services)

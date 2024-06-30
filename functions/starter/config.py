@@ -11,3 +11,5 @@ class StarterConfig:
         )
 
         services.api_gateway.create_endpoint("POST", "/starter", function, public=True)
+
+        services.sqs.grant_send_messages("downloads_queue", function)
