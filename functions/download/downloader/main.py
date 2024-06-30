@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     VIDEOS_BUCKET_NAME = os.environ.get("VIDEOS_BUCKET_NAME", "live-cut-the-bullshit-videos")
     VIDEOS_TABLE_NAME = os.environ.get("VIDEOS_TABLE_NAME", "Dev-Videos")
     VIDEOS_TOPIC_ARN = os.environ.get(
-        "VIDEOS_TOPIC_ARN", "arn:aws:sns:us-east-2:211125768252:Live-Make-My-Cut-videos_topic"
+        "VIDEOS_TOPIC_ARN", "arn:aws:sns:us-east-2:211125768252:Live-Youtube-Chat-Tracker-videos_topic"
     )
 
     body = json.loads(event["Records"][0]["body"])
