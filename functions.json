@@ -30,6 +30,19 @@
                 "trigger": "downloads_queue"
             }
         ],
-        "invocations": []
+        "invocations": [
+            {
+                "service": "s3",
+                "resource": "videos_bucket"
+            },
+            {
+                "service": "dynamodb",
+                "resource": "videos_table"
+            },
+            {
+                "service": "sns",
+                "resource": "videos_topic"
+            }
+        ]
     }
 ]

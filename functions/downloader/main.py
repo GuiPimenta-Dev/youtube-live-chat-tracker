@@ -6,13 +6,23 @@ import os
 import boto3
 from pytube import YouTube
 
+
 @dataclass
 class Input:
     pass
 
+
 @dataclass
 class Output:
     message: str
+
+
+def download_video_to_buffer(yt, url):
+    buffer = BytesIO()
+    video_stream = yt.streams.filter(file_extension="mp4").first()
+    video_stream.stream_to_buffer(buffer)
+    buffer.seek(0)
+    return buffer
 
 
 def lambda_handler(event, context):
@@ -28,14 +38,11 @@ def lambda_handler(event, context):
     video_id = body["video_id"]
     language = body["language"]
 
-    buffer = BytesIO()
-
     yt = YouTube(url)
-    video_stream = yt.streams.filter(file_extension="mp4").first()
-    video_stream.stream_to_buffer(buffer)
-    buffer.seek(0)
 
-    s3_client = boto3.client("s3")
+    buffer = download_video_to_buffer(yt, url)
+
+    s3_client = boto3.client("s3", region_name="us-east-1")
     s3_client.put_object(
         Bucket=VIDEOS_BUCKET_NAME,
         Key=f"{video_id}.mp3",
@@ -62,7 +69,7 @@ def lambda_handler(event, context):
         }
     )
 
-    sns_client = boto3.client("sns", region_name="us-east-2")
+    sns_client = boto3.client("sns")
     sns_client.publish(
         TopicArn=VIDEOS_TOPIC_ARN,
         Message=json.dumps({"video_id": video_id, "url": url}),

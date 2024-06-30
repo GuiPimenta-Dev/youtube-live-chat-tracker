@@ -2,7 +2,7 @@ import json
 import os
 
 import pytest
-from moto import mock_sqs
+from moto import mock_sqs, mock_dynamodb, mock_s3, mock_sns
 import boto3
 
 
@@ -11,10 +11,20 @@ def sqs():
     with mock_sqs():
         yield boto3.client("sqs")
 
+
 @pytest.fixture
-def downloads_queue(sqs):
-    sqs.create_queue(QueueName="downloads_queue")
-    response = sqs.get_queue_url(QueueName="downloads_queue")
-    queue_url = response["QueueUrl"]
-    os.environ["DOWNLOADS_QUEUE_URL"] = queue_url
-    yield sqs
+def dynamodb():
+    with mock_dynamodb():
+        yield boto3.client("dynamodb")
+
+
+@pytest.fixture
+def s3():
+    with mock_s3():
+        yield boto3.client("s3", region_name="us-east-1")
+
+
+@pytest.fixture
+def sns():
+    with mock_sns():
+        yield boto3.client("sns")
