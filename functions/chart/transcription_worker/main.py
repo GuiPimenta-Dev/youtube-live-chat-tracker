@@ -130,8 +130,9 @@ def lambda_handler(event, context):
             "chat_summary": "N/A",
         }
 
-
-    print(f"Adding transcription to the database for video {video_id} with interval {interval} in table {TRANSCRIPTIONS_TABLE_NAME}")
+    print(
+        f"Adding transcription to the database for video {video_id} with interval {interval} in table {TRANSCRIPTIONS_TABLE_NAME}"
+    )
     print(f"PK: {video_id}#INTERVAL={interval} Rating: {response['rating']} Reason: {response['reason']}")
 
     transcriptions_table.put_item(
