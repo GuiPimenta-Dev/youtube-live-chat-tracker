@@ -17,6 +17,7 @@ class SQS:
             scope,
             "TranscriptQueue",
             queue_name=f"{context.stage.lower()}-youtube-transcript",
+            visibility_timeout=Duration.minutes(15),
         )
 
     @trigger(service="sqs", trigger="queue", function="function")
