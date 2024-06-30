@@ -19,7 +19,6 @@ class S3:
             bucket_arn=context.resources["arns"]["transcriptions_bucket_arn"],
         )
 
-
     @trigger(service="s3", trigger="bucket", function="function")
     def create_trigger(self, bucket, function, event=s3.EventType.OBJECT_CREATED):
         bucket = getattr(self, bucket)

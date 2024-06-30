@@ -1,3 +1,5 @@
+from infra.services.dynamodb import DynamoDB
+from infra.services.sns import SNS
 from infra.services.s3 import S3
 from infra.services.sqs import SQS
 from infra.services.api_gateway import APIGateway
@@ -12,3 +14,5 @@ class Services:
         self.layers = Layers(scope)
         self.sqs = SQS(scope, context)
         self.s3 = S3(scope, context)
+        self.sns = SNS(scope, context)
+        self.dynamodb = DynamoDB(scope, context)
