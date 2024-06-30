@@ -1,4 +1,5 @@
 from infra.services import Services
+from aws_cdk import aws_iam as iam
 
 
 class CreateChartConfig:
@@ -11,6 +12,7 @@ class CreateChartConfig:
             directory="create_chart",
             environment={
                 "TRANSCRIPT_QUEUE_URL": services.sqs.transcript_queue.queue_url,
+                "CHAT_TABLE_NAME": services.dynamodb.chats_table.table_name,
             },
         )
 
@@ -18,3 +20,9 @@ class CreateChartConfig:
 
         services.sqs.grant_send_messages("transcript_queue", function)
 
+        function.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["dynamodb:Query"],
+                resources=[f"{services.dynamodb.chats_table.table_arn}/index/*"],
+            )
+        )
