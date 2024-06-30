@@ -86,10 +86,3 @@ def lambda_handler(event, context):
         )
 
     return {"statusCode": 200, "body": json.dumps({"message": "ok!"}), "headers": {"Access-Control-Allow-Origin": "*"}}
-
-
-event = {
-    "pathParameters": {"video_id": "016dcccd-9656-44f1-8a0c-07f2d7f530cc"},
-    "queryStringParameters": {"interval": 10},
-}
-lambda_handler(event, None)
