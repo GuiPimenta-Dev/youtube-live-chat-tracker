@@ -1,8 +1,18 @@
 import json
 import os
 
+import pytest
+
 from .main import lambda_handler
 
+
+@pytest.fixture
+def downloads_queue(sqs):
+    sqs.create_queue(QueueName="downloads_queue")
+    response = sqs.get_queue_url(QueueName="downloads_queue")
+    queue_url = response["QueueUrl"]
+    os.environ["DOWNLOADS_QUEUE_URL"] = queue_url
+    yield sqs
 
 
 def test_it_should_publish_a_message_on_sqs_to_start_the_process(downloads_queue):
