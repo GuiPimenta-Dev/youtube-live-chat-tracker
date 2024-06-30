@@ -49,6 +49,7 @@ def sns():
     with mock_sns():
         yield boto3.client("sns")
 
+
 @pytest.fixture
 def transcribe():
     with mock_transcribe():
