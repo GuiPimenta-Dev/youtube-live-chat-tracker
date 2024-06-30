@@ -18,6 +18,7 @@ class Output:
 
 
 def download_video_to_buffer(yt, url):
+    print(f"Downloading video {url}")
     buffer = BytesIO()
     video_stream = yt.streams.filter(file_extension="mp4").first()
     video_stream.stream_to_buffer(buffer)
@@ -69,6 +70,8 @@ def lambda_handler(event, context):
         }
     )
 
+    print(f"Publishing video {video_id} to SNS topic {VIDEOS_TOPIC_ARN}")
+    
     sns_client = boto3.client("sns")
     sns_client.publish(
         TopicArn=VIDEOS_TOPIC_ARN,
