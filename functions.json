@@ -1,1 +1,17 @@
-[]
+[
+    {
+        "name": "Starter",
+        "path": "./functions/starter",
+        "description": "Start the process",
+        "timeout": 60,
+        "triggers": [
+            {
+                "service": "api_gateway",
+                "trigger": "/starter",
+                "method": "POST",
+                "public": true
+            }
+        ],
+        "invocations": []
+    }
+]

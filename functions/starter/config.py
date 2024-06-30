@@ -10,4 +10,4 @@ class StarterConfig:
             description="Start the process",
         )
 
-        services.api_gateway.create_endpoint("POST", "/starter", function)
+        services.api_gateway.create_endpoint("POST", "/starter", function, public=True)

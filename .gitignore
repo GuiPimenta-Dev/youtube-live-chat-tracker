@@ -155,3 +155,5 @@ coverage.xml
 # Log reports #
 ####################
 *.log
+
+diagram.png

@@ -31,6 +31,7 @@ def test_it_should_publish_a_message_on_sqs_to_start_the_process(sqs_client):
     assert message["video_id"]
     assert message["language"] == "pt-BR"
 
+
 def test_it_should_return_the_video_id(sqs_client):
     event = {"body": json.dumps({"url": "https://www.youtube.com/watch?v=5Zw0taVl2l0"})}
     response = lambda_handler(event, None)
