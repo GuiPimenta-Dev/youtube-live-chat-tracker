@@ -9,6 +9,7 @@ class TranscriptionWorkerConfig:
             path="./functions/chart",
             description="Parse the transcription",
             directory="transcription_worker",
+            layers=[services.layers.sm_utils_layer],
             environment={
                 "CHATS_TABLE_NAME": services.dynamodb.chats_table.table_name,
                 "TRANSCRIPTIONS_TABLE_NAME": services.dynamodb.transcriptions_table.table_name,
