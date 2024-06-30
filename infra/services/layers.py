@@ -39,12 +39,18 @@ class Layers:
 
         self.openai_layer = _lambda.LayerVersion.from_layer_version_arn(
             scope,
-            id='OpenaiLayer',
-            layer_version_arn='arn:aws:lambda:us-east-2:211125768252:layer:openai:1',
-         )
+            id="OpenaiLayer",
+            layer_version_arn="arn:aws:lambda:us-east-2:211125768252:layer:openai:1",
+        )
 
         self.pydantic_layer = _lambda.LayerVersion.from_layer_version_arn(
             scope,
-            id='PydanticLayer',
-            layer_version_arn='arn:aws:lambda:us-east-2:211125768252:layer:pydantic:1',
-         )
+            id="PydanticLayer",
+            layer_version_arn="arn:aws:lambda:us-east-2:211125768252:layer:pydantic:1",
+        )
+
+        self.pydantic_klayers_layer = _lambda.LayerVersion.from_layer_version_arn(
+            scope,
+            id="PydanticLayer",
+            layer_version_arn="arn:aws:lambda:us-east-2:770693421928:layer:Klayers-p310-pydantic:8",
+        )
