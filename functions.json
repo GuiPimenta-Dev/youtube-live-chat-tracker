@@ -80,5 +80,25 @@
                 "resource": "transcriptions_bucket"
             }
         ]
+    },
+    {
+        "name": "CreateChart",
+        "path": "./functions/chart/create_chart",
+        "description": "Parse the transcription",
+        "timeout": 60,
+        "triggers": [
+            {
+                "service": "api_gateway",
+                "trigger": "/chart/{video_id}",
+                "method": "POST",
+                "public": true
+            }
+        ],
+        "invocations": [
+            {
+                "service": "sqs",
+                "resource": "transcript_queue"
+            }
+        ]
     }
 ]
