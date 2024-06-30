@@ -1,10 +1,11 @@
-import base64
-from io import BytesIO
 import json
 import os
-from .main import lambda_handler
+
 import pytest
-from unittest.mock import patch, MagicMock
+
+from conftest import simplify_dynamodb_item
+
+from .main import lambda_handler
 
 
 @pytest.fixture
@@ -31,14 +32,6 @@ def videos_topic(sns):
     topic = sns.create_topic(Name="videos_topic")
     os.environ["VIDEOS_TOPIC_ARN"] = topic["TopicArn"]
     yield sns
-
-
-def simplify_dynamodb_item(item):
-    simple_item = {}
-    for key, value in item.items():
-        for data_type, data_value in value.items():
-            simple_item[key] = data_value
-    return simple_item
 
 
 def test_it_should_download_a_video_and_trigger_the_correct_events(videos_bucket, videos_table, videos_topic):
