@@ -72,6 +72,10 @@
             {
                 "service": "sns",
                 "trigger": "videos_topic"
+            },
+            {
+                "service": "s3",
+                "trigger": "videos_bucket"
             }
         ],
         "invocations": [

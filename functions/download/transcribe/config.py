@@ -18,6 +18,7 @@ class TranscribeConfig:
         services.sns.create_trigger("videos_topic", function)
         
         services.s3.grant_write("transcriptions_bucket",function)
+        services.s3.create_trigger("videos_bucket",function)
         
         services.dynamodb.videos_table.grant_read_data(function)
         
