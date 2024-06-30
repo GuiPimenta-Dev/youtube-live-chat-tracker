@@ -13,15 +13,12 @@ class DownloaderConfig:
             memory_size=512,
             timeout=15,
             environment={
-                "VIDEOS_BUCKET_NAME": services.s3.videos_bucket.bucket_name,
                 "VIDEOS_TABLE_NAME": services.dynamodb.videos_table.table_name,
                 "VIDEOS_TOPIC_ARN": services.sns.videos_topic.topic_arn,
             },
         )
 
         services.sqs.create_trigger("downloads_queue", function)
-
-        services.s3.grant_write("videos_bucket", function)
 
         services.dynamodb.grant_write("videos_table", function)
 
