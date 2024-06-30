@@ -1,0 +1,24 @@
+from infra.services import Services
+
+
+class TranscriptionWorkerConfig:
+    def __init__(self, services: Services) -> None:
+
+        function = services.aws_lambda.create_function(
+            name="TranscriptionWorker",
+            path="./functions/chart",
+            description="Parse the transcription",
+            directory="transcription_worker",
+            environment={
+                "CHATS_TABLE_NAME": services.dynamodb.chats_table.table_name,
+                "TRANSCRIPTIONS_TABLE_NAME": services.dynamodb.transcriptions_table.table_name,
+                "OPENAPI_KEY_SECRET_NAME": services.secrets_manager.open_api_secret.secret_name,
+            },
+        )
+        
+        services.sqs.create_trigger("transcript_queue", function)
+        
+        services.dynamodb.grant_write("transcriptions_table", function)
+        services.dynamodb.chats_table.grant_read_data(function)
+        
+        services.secrets_manager.open_api_secret.grant_read(function)
