@@ -1,3 +1,4 @@
+from functions.download.transcribe.config import TranscribeConfig
 from aws_cdk import Stack
 from constructs import Construct
 
@@ -22,3 +23,6 @@ class LambdaStack(Stack):
 
         # GetChat
         GetChatConfig(self.services)
+
+        # Download
+        TranscribeConfig(self.services)
