@@ -1,3 +1,4 @@
+from infra.services.secrets_manager import SecretsManager
 from infra.services.api_gateway import APIGateway
 from infra.services.aws_lambda import Lambda
 from infra.services.dynamodb import DynamoDB
@@ -16,3 +17,4 @@ class Services:
         self.s3 = S3(scope, context)
         self.sns = SNS(scope, context)
         self.dynamodb = DynamoDB(scope, context)
+        self.secrets_manager = SecretsManager(scope, context)
