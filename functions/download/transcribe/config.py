@@ -19,6 +19,7 @@ class TranscribeConfig:
         
         services.s3.grant_write("transcriptions_bucket",function)
         services.s3.videos_bucket.grant_read(function)
+        services.s3.transcriptions_bucket.grant_read(function)
         
         services.dynamodb.videos_table.grant_read_data(function)
         
