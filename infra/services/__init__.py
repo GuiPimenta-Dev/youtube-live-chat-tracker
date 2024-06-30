@@ -1,10 +1,10 @@
-from infra.services.dynamodb import DynamoDB
-from infra.services.sns import SNS
-from infra.services.s3 import S3
-from infra.services.sqs import SQS
 from infra.services.api_gateway import APIGateway
 from infra.services.aws_lambda import Lambda
+from infra.services.dynamodb import DynamoDB
 from infra.services.layers import Layers
+from infra.services.s3 import S3
+from infra.services.sns import SNS
+from infra.services.sqs import SQS
 
 
 class Services:
