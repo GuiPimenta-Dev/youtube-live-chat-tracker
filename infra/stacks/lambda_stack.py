@@ -1,10 +1,11 @@
-from functions.download.transcribe.config import TranscribeConfig
 from aws_cdk import Stack
 from constructs import Construct
 
+from functions.chart.create_chart.config import CreateChartConfig
 from functions.download.downloader.config import DownloaderConfig
 from functions.download.get_chat.config import GetChatConfig
 from functions.download.starter.config import StarterConfig
+from functions.download.transcribe.config import TranscribeConfig
 from infra.services import Services
 
 
@@ -26,3 +27,6 @@ class LambdaStack(Stack):
 
         # Download
         TranscribeConfig(self.services)
+
+        # Chart
+        CreateChartConfig(self.services)
