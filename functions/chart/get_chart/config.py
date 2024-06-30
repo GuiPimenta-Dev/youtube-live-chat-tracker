@@ -1,5 +1,7 @@
-from infra.services import Services
 from aws_cdk import aws_iam as iam
+
+from infra.services import Services
+
 
 class GetChartConfig:
     def __init__(self, services: Services) -> None:
@@ -13,7 +15,7 @@ class GetChartConfig:
                 "TRANSCRIPTIONS_TABLE_NAME": services.dynamodb.transcriptions_table.table_name,
             },
         )
-        
+
         services.api_gateway.create_endpoint("GET", "/chart", function, public=True)
 
         services.dynamodb.transcriptions_table.grant_read_data(function)
