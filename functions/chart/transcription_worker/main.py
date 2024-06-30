@@ -54,7 +54,7 @@ def lambda_handler(event, context):
     interval = body["interval"]
     start_time = body["start_time"]
     index = body["index"]
-    print(index)
+    print(f"Processing video {video_id} with interval {interval} and start time {start_time} and index {index}")
 
     TRANSCRIPTIONS_TABLE_NAME = os.environ.get("TRANSCRIPTIONS_TABLE_NAME", "Dev-Result")
 
@@ -129,6 +129,10 @@ def lambda_handler(event, context):
             "transcription_summary": "N/A",
             "chat_summary": "N/A",
         }
+
+
+    print(f"Adding transcription to the database for video {video_id} with interval {interval} in table {TRANSCRIPTIONS_TABLE_NAME}")
+    print(f"PK: {video_id}#INTERVAL={interval} Rating: {response['rating']} Reason: {response['reason']}")
 
     transcriptions_table.put_item(
         Item={
