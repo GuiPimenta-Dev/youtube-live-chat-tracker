@@ -8,7 +8,6 @@ from functions.chart.transcription_worker.config import \
 from functions.download.downloader.config import DownloaderConfig
 from functions.download.get_chat.config import GetChatConfig
 from functions.download.starter.config import StarterConfig
-from functions.download.transcribe.config import TranscribeConfig
 from infra.services import Services
 
 
@@ -23,7 +22,6 @@ class LambdaStack(Stack):
         StarterConfig(self.services)
         DownloaderConfig(self.services)
         GetChatConfig(self.services)
-        TranscribeConfig(self.services)
 
         # Chart
         GetChartConfig(self.services)
