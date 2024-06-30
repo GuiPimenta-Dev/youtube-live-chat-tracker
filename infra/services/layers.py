@@ -36,3 +36,9 @@ class Layers:
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_9],
             description="",
         )
+
+        self.openai_layer = _lambda.LayerVersion.from_layer_version_arn(
+            scope,
+            id='OpenaiLayer',
+            layer_version_arn='arn:aws:lambda:us-east-2:211125768252:layer:openai:1',
+         )
