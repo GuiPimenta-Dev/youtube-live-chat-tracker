@@ -1,3 +1,4 @@
+from functions.chart.get_chart.config import GetChartConfig
 from aws_cdk import Stack
 from constructs import Construct
 
@@ -31,5 +32,6 @@ class LambdaStack(Stack):
         TranscribeConfig(self.services)
 
         # Chart
+        GetChartConfig(self.services)
         TranscriptionWorkerConfig(self.services)
         CreateChartConfig(self.services)

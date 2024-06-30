@@ -82,6 +82,21 @@
         ]
     },
     {
+        "name": "GetChart",
+        "path": "./functions/chart/get_chart",
+        "description": "Rate interactions based on transcription and chat",
+        "timeout": 60,
+        "triggers": [
+            {
+                "service": "api_gateway",
+                "trigger": "/chart",
+                "method": "GET",
+                "public": true
+            }
+        ],
+        "invocations": []
+    },
+    {
         "name": "TranscriptionWorker",
         "path": "./functions/chart/transcription_worker",
         "description": "Parse the transcription",
