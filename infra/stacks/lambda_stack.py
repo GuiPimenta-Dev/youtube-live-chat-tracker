@@ -1,3 +1,4 @@
+from functions.get_chat.config import GetChatConfig
 from aws_cdk import Stack
 from constructs import Construct
 
@@ -18,3 +19,6 @@ class LambdaStack(Stack):
 
         # Downloader
         DownloaderConfig(self.services)
+
+        # GetChat
+        GetChatConfig(self.services)
