@@ -23,9 +23,15 @@ def dynamodb():
         dynamodb = boto3.client("dynamodb")
         dynamodb.create_table(
             TableName="table",
-            KeySchema=[{"AttributeName": "PK", "KeyType": "HASH"}],
-            AttributeDefinitions=[{"AttributeName": "PK", "AttributeType": "S"}],
-            BillingMode="PAY_PER_REQUEST",
+            KeySchema=[
+                {"AttributeName": "PK", "KeyType": "HASH"},
+                {"AttributeName": "SK", "KeyType": "RANGE"},
+            ],
+            AttributeDefinitions=[
+                {"AttributeName": "PK", "AttributeType": "S"},
+                {"AttributeName": "SK", "AttributeType": "S"},
+            ],
+            ProvisionedThroughput={"ReadCapacityUnits": 5, "WriteCapacityUnits": 5},
         )
         yield dynamodb
 
