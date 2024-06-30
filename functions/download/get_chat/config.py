@@ -1,5 +1,6 @@
 from infra.services import Services
 
+
 class GetChatConfig:
     def __init__(self, services: Services) -> None:
 
@@ -12,7 +13,7 @@ class GetChatConfig:
             memory_size=512,
             layers=[services.layers.chat_downloader_layer],
         )
-        
+
         services.sns.create_trigger("videos_topic", function)
 
         services.dynamodb.grant_write("chats_table", function)
