@@ -1,6 +1,6 @@
 import boto3
 import pytest
-from moto import mock_dynamodb, mock_s3, mock_sns, mock_sqs
+from moto import mock_dynamodb, mock_s3, mock_sns, mock_sqs, mock_transcribe
 
 
 def simplify_dynamodb_item(item):
@@ -48,3 +48,8 @@ def s3():
 def sns():
     with mock_sns():
         yield boto3.client("sns")
+
+@pytest.fixture
+def transcribe():
+    with mock_transcribe():
+        yield boto3.client("transcribe")
