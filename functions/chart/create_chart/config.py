@@ -26,6 +26,6 @@ class CreateChartConfig:
         function.add_to_role_policy(
             iam.PolicyStatement(
                 actions=["dynamodb:Query"],
-                resources=[f"{services.dynamodb.chats_table.table_arn}/index/*"],
+                resources=["*"],
             )
         )

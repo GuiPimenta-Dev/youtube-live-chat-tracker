@@ -121,10 +121,6 @@ def lambda_handler(event, context):
 
     print(f"Processing video {video_id} with interval {interval}")
 
-    sqs = boto3.client("sqs", "us-east-2")
-
-    TRANSCRIPT_QUEUE_URL = os.environ.get("TRANSCRIPT_QUEUE_URL")
-
     batches = group_chat_by_interval(partition_key=video_id, interval=interval)
 
     for index, batch in enumerate(batches):
