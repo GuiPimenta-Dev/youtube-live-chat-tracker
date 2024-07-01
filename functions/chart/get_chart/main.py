@@ -24,7 +24,7 @@ def lambda_handler(event, context):
 
     data = transcriptions_table.query(
         KeyConditionExpression=boto3.dynamodb.conditions.Key("PK").eq(f"{video_id}#INTERVAL={interval}"),
-        ProjectionExpression="SK, chat_summary, rating, reason",
+        ProjectionExpression="SK, chat_summary, messages, rating, reason",
     )["Items"]
 
     for item in data:
