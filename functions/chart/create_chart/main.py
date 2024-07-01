@@ -15,7 +15,9 @@ class Path:
 
 @dataclass
 class Input:
+    prompt: Optional[str] = ""
     interval: Optional[int] = 10
+    min_messages: Optional[int] = 20
 
 
 @dataclass
@@ -66,6 +68,8 @@ def lambda_handler(event, context):
     body = json.loads(event["body"])
     interval = body.get("interval", 10)
     min_messages = body.get("min_messages", 20)
+    prompt = body.get("prompt", "")    
+    
 
     print(f"Processing video {video_id} with interval {interval}")
 
@@ -90,6 +94,7 @@ def lambda_handler(event, context):
                         "interval": interval,
                         "index": index,
                         "min_messages": min_messages,
+                        "prompt": prompt
                     },
                     default=str,
                 ),

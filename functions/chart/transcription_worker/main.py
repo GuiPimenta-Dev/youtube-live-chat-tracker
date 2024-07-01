@@ -17,6 +17,7 @@ def lambda_handler(event, context):
     interval = body["interval"]
     index = body["index"]
     min_messages = body["min_messages"]
+    author_summary = body["prompt"]
     
     print(f"Processing video {video_id} with interval {interval} and index {index}")
 
@@ -33,7 +34,6 @@ def lambda_handler(event, context):
     current_dir = os.path.dirname(os.path.realpath(__file__))
     prompt = open(f"{current_dir}/prompt.txt").read()
 
-    author_summary = "Although my channel is focused on tech and programming, the primary focus of my channel is humor. So I would consider a good metric for my content to be how funny it is."
 
     items = {
         "author_summary": author_summary,
@@ -45,7 +45,7 @@ def lambda_handler(event, context):
 {json.dumps(items)}
 """
 
-    if len(messages) < min_messages:
+    if len(messages) < int(min_messages):
         response = {
             "rating": "0",
             "reason": "Minimum number of messages not reached.",
