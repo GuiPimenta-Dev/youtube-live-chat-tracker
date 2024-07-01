@@ -77,18 +77,22 @@ def lambda_handler(event, context):
     for index, batch in enumerate(batches):
 
         print(f"Sending batch {index + 1} to SQS")
-        sqs.send_message(
-            QueueUrl=TRANSCRIPT_QUEUE_URL,
-            MessageBody=json.dumps(
-                {
-                    "video_id": video_id,
-                    "label": batch,
-                    "messages": batches[batch],
-                    "interval": interval,
-                    "index": index,
-                },
-                default=str,
-            ),
-        )
+        
+        try:
+            sqs.send_message(
+                QueueUrl=TRANSCRIPT_QUEUE_URL,
+                MessageBody=json.dumps(
+                    {
+                        "video_id": video_id,
+                        "label": batch,
+                        "messages": batches[batch],
+                        "interval": interval,
+                        "index": index,
+                    },
+                    default=str,
+                ),
+            )
+        except Exception as e:
+            print(e)
 
     return {"statusCode": 200, "body": json.dumps({"message": "ok!"}), "headers": {"Access-Control-Allow-Origin": "*"}}
