@@ -16,6 +16,8 @@ def lambda_handler(event, context):
     label = body["label"]
     interval = body["interval"]
     index = body["index"]
+    min_messages = body["min_messages"]
+    
     print(f"Processing video {video_id} with interval {interval} and index {index}")
 
     TRANSCRIPTIONS_TABLE_NAME = os.environ.get("TRANSCRIPTIONS_TABLE_NAME", "Dev-Result")
@@ -43,29 +45,35 @@ def lambda_handler(event, context):
 {json.dumps(items)}
 """
 
-    try:
-        completion = client.chat.completions.create(
-            model="gpt-4-turbo",
-            messages=[{"role": "user", "content": full_prompt}],
-            temperature=1,
-            max_tokens=4096,
-            top_p=1,
-            stream=False,
-            response_format={"type": "json_object"},
-            stop=None,
-        )
-        response = json.loads(completion.choices[0].message.content)
-    except Exception as e:
-        print(e)
+    if len(messages) < min_messages:
         response = {
-            "rating": "N/A",
-            "reason": "N/A",
+            "rating": "0",
+            "reason": "Minimum number of messages not reached.",
             "chat_summary": "N/A",
         }
+        
+    else:
+        try:
+            completion = client.chat.completions.create(
+                model="gpt-4-turbo",
+                messages=[{"role": "user", "content": full_prompt}],
+                temperature=1,
+                max_tokens=4096,
+                top_p=1,
+                stream=False,
+                response_format={"type": "json_object"},
+                stop=None,
+            )
+            response = json.loads(completion.choices[0].message.content)
+        except Exception as e:
+            print(e)
+            response = {
+                "rating": "0",
+                "reason": "N/A",
+                "chat_summary": "N/A",
+            }
+    
 
-    print(
-        f"Adding transcription to the database for video {video_id} with interval {interval} in table {TRANSCRIPTIONS_TABLE_NAME}"
-    )
     print(f"PK: {video_id}#INTERVAL={interval} Rating: {response['rating']} Reason: {response['reason']}")
 
     transcriptions_table.put_item(

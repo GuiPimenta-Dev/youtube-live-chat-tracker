@@ -65,6 +65,7 @@ def lambda_handler(event, context):
 
     body = json.loads(event["body"])
     interval = body.get("interval", 10)
+    min_messages = body.get("min_messages", 20)
 
     print(f"Processing video {video_id} with interval {interval}")
 
@@ -88,6 +89,7 @@ def lambda_handler(event, context):
                         "messages": batches[batch],
                         "interval": interval,
                         "index": index,
+                        "min_messages": min_messages,
                     },
                     default=str,
                 ),
