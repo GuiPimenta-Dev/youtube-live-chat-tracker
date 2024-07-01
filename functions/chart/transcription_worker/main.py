@@ -11,14 +11,28 @@ def lambda_handler(event, context):
     dynamodb = boto3.resource("dynamodb")
 
     body = json.loads(event["Records"][0]["body"])
-    video_id = body["video_id"]
-    chat = body["messages"]
-    label = body["label"]
-    interval = body["interval"]
-    index = body["index"]
-    min_messages = body["min_messages"]
-    author_summary = body["prompt"]
-    
+
+
+    if "s3_bucket" in body and "s3_key" in body:
+        s3 = boto3.client('s3')
+        # Payload is in S3
+        s3_bucket = body['s3_bucket']
+        s3_key = body['s3_key']
+        
+        s3_object = s3.get_object(Bucket=s3_bucket, Key=s3_key)
+        payload = json.loads(s3_object['Body'].read().decode('utf-8'))
+    else:
+        # Payload is directly in the SQS message
+        payload = body
+
+    video_id = payload["video_id"]
+    chat = payload["messages"]
+    label = payload["label"]
+    interval = payload["interval"]
+    index = payload["index"]
+    min_messages = payload["min_messages"]
+    author_summary = payload["prompt"]
+
     print(f"Processing video {video_id} with interval {interval} and index {index}")
 
     TRANSCRIPTIONS_TABLE_NAME = os.environ.get("TRANSCRIPTIONS_TABLE_NAME", "Dev-Result")
@@ -33,7 +47,6 @@ def lambda_handler(event, context):
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
     prompt = open(f"{current_dir}/prompt.txt").read()
-
 
     items = {
         "author_summary": author_summary,
@@ -51,7 +64,7 @@ def lambda_handler(event, context):
             "reason": "Minimum number of messages not reached.",
             "chat_summary": "N/A",
         }
-        
+
     else:
         try:
             completion = client.chat.completions.create(
@@ -72,7 +85,6 @@ def lambda_handler(event, context):
                 "reason": "N/A",
                 "chat_summary": "N/A",
             }
-    
 
     print(f"PK: {video_id}#INTERVAL={interval} Rating: {response['rating']} Reason: {response['reason']}")
 

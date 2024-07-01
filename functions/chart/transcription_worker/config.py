@@ -23,6 +23,8 @@ class TranscriptionWorkerConfig:
 
         services.sqs.create_trigger("transcript_queue", function)
 
+        services.s3.large_payload_bucket.grant_read_write(function)
+        
         services.dynamodb.grant_write("transcriptions_table", function)
         services.dynamodb.chats_table.grant_read_data(function)
 
