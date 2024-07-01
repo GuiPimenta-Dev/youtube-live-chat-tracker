@@ -61,6 +61,55 @@ def group_chat_by_interval(partition_key, interval):
     return grouped_items
 
 
+
+import boto3
+import json
+import uuid
+
+sqs = boto3.client('sqs')
+
+
+def upload_to_s3(data, bucket_name):
+    s3 = boto3.client('s3')
+    key = f"large_payloads/{uuid.uuid4()}.json"
+    s3.put_object(Bucket=bucket_name, Key=key, Body=json.dumps(data))
+    return key
+
+
+def send_message_to_sqs(video_id, batch, batches, interval, index, min_messages, prompt):
+    TRANSCRIPT_QUEUE_URL = os.environ.get("TRANSCRIPT_QUEUE_URL")
+    BUCKET_NAME = 'gui-docs'
+
+    try:
+        payload = {
+            "video_id": video_id,
+            "label": batch,
+            "messages": batches[batch],
+            "interval": interval,
+            "index": index,
+            "min_messages": min_messages,
+            "prompt": prompt
+        }
+        
+        payload_size = len(json.dumps(payload).encode('utf-8'))
+
+        if payload_size > 256 * 1024:  # 256 KB
+            s3_key = upload_to_s3(payload, BUCKET_NAME)
+            message_body = json.dumps({
+                "s3_bucket": BUCKET_NAME,
+                "s3_key": s3_key
+            })
+        else:
+            message_body = json.dumps(payload)
+
+        sqs.send_message(
+            QueueUrl=TRANSCRIPT_QUEUE_URL,
+            MessageBody=message_body,
+        )
+    except Exception as e:
+        print(e)
+
+
 def lambda_handler(event, context):
 
     video_id = event["pathParameters"]["video_id"]
@@ -68,8 +117,7 @@ def lambda_handler(event, context):
     body = json.loads(event["body"])
     interval = body.get("interval", 10)
     min_messages = body.get("min_messages", 20)
-    prompt = body.get("prompt", "")    
-    
+    prompt = body.get("prompt", "")
 
     print(f"Processing video {video_id} with interval {interval}")
 
@@ -82,24 +130,6 @@ def lambda_handler(event, context):
     for index, batch in enumerate(batches):
 
         print(f"Sending batch {index + 1} to SQS")
-        
-        try:
-            sqs.send_message(
-                QueueUrl=TRANSCRIPT_QUEUE_URL,
-                MessageBody=json.dumps(
-                    {
-                        "video_id": video_id,
-                        "label": batch,
-                        "messages": batches[batch],
-                        "interval": interval,
-                        "index": index,
-                        "min_messages": min_messages,
-                        "prompt": prompt
-                    },
-                    default=str,
-                ),
-            )
-        except Exception as e:
-            print(e)
+        send_message_to_sqs(video_id, batch, batches, interval, index, min_messages, prompt)
 
     return {"statusCode": 200, "body": json.dumps({"message": "ok!"}), "headers": {"Access-Control-Allow-Origin": "*"}}

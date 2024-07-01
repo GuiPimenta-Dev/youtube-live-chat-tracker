@@ -21,6 +21,8 @@ class CreateChartConfig:
 
         services.sqs.grant_send_messages("transcript_queue", function)
 
+        services.s3.large_payload_bucket.grant_read_write(function)
+        
         function.add_to_role_policy(
             iam.PolicyStatement(
                 actions=["dynamodb:Query"],
