@@ -2,16 +2,20 @@ import json
 import os
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List
+from datetime import datetime, timedelta
+from typing import Optional
 
 import boto3
-from boto3.dynamodb.conditions import Key
+
+
+@dataclass
+class Path:
+    video_id: str
 
 
 @dataclass
 class Input:
-    pass
+    interval: Optional[int] = 10
 
 
 @dataclass
@@ -33,7 +37,7 @@ def group_chat_by_interval(partition_key, interval):
 
     # Function to round down to the nearest 10-minute interval
     def round_time(dt, interval=interval):
-        discard = timedelta(minutes=dt.minute % interval, seconds=dt.second, microseconds=dt.microsecond)
+        discard = timedelta(minutes=dt.minute % int(interval), seconds=dt.second, microseconds=dt.microsecond)
         return dt - discard
 
     def format_time_label(dt):
@@ -58,7 +62,9 @@ def group_chat_by_interval(partition_key, interval):
 def lambda_handler(event, context):
 
     video_id = event["pathParameters"]["video_id"]
-    interval = event["queryStringParameters"].get("interval", 10)
+
+    body = json.loads(event["body"])
+    interval = body.get("interval", 10)
 
     print(f"Processing video {video_id} with interval {interval}")
 

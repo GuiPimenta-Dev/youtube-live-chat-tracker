@@ -1,7 +1,19 @@
 import json
 import os
+from dataclasses import dataclass
 
 import boto3
+
+
+@dataclass
+class Input:
+    video_id: str
+    interval: int = 10
+
+
+@dataclass
+class Output:
+    message: str
 
 
 def lambda_handler(event, context):
