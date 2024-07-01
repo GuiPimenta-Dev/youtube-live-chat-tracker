@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Rating Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="ratingChart" width="400" height="200"></canvas>
+    <script>
+        async function fetchData() {
+            const videoId = 'your_video_id_here'; // Replace with actual video ID
+            const interval = 10; // Replace with actual interval if needed
+            const response = await fetch(`https://32e92v89fk.execute-api.us-east-2.amazonaws.com/prod/chart?video_id=7b1f1f2e-f4f3-4ab3-807f-c0a2f85bf9a6&interval=10`);
+            const result = await response.json();
+            return result.data;
+        }
+
+        async function createChart() {
+            const data = await fetchData();
+
+            const labels = data.map(item => item.hour);
+            const ratings = data.map(item => parseInt(item.rating));
+
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Chat Ratings',
+                    data: ratings,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: 'line',
+                data: chartData,
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Hour'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Rating'
+                            },
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }
+                }
+            };
+
+            const ratingChart = new Chart(
+                document.getElementById('ratingChart'),
+                config
+            );
+        }
+
+        createChart();
+    </script>
+</body>
+</html>
